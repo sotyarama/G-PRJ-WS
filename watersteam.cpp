@@ -37,6 +37,7 @@ WaterSteam::WaterSteam(QWidget *parent) :
     ui(new Ui::WaterSteam)
 {
     ui->setupUi(this);
+    set_AllParameters();
 }
 
 WaterSteam::~WaterSteam()
@@ -59,6 +60,8 @@ void WaterSteam::reg_4_saturation_Temperature()
 
     double temperature = t_Ref*(n_region4[10]+D-pow((pow((n_region4[10]+D),2)-4.00*(n_region4[9]+n_region4[10]*D)),0.50))/2.00;
     t_Output = temperature;
+
+    qDebug() << temperature;
 }
 
 void WaterSteam::reg_4_saturation_Pressure()
@@ -74,4 +77,148 @@ void WaterSteam::reg_4_saturation_Pressure()
 
     double pressure = p_Ref*pow(((2.00*C)/(-B+sqrt(pow(B,2)-4.00*A*C))),4);
     p_Output = pressure;
+}
+
+
+
+void WaterSteam::set_AllParameters()
+{
+    ui->TemperatureIncomboBox->addItems(TemperatureUnit);
+    ui->PressureIncomboBox->addItems(PressureUnit);
+    ui->TemperatureOutcomboBox->addItems(TemperatureUnit);
+    ui->PressureOutcomboBox->addItems(PressureUnit);
+    ui->TemperaturelineEdit->setText("");
+    ui->PressurelineEdit->setText("");
+}
+
+void WaterSteam::read_InputValue()
+{
+    double temperature = ui->TemperatureSpinBox->value();
+    double pressure = ui->PressureSpinBox->value();
+
+    int t = ui->TemperatureIncomboBox->currentIndex();
+    int p = ui->PressureIncomboBox->currentIndex();
+
+    if (t<0) {
+        t = 0;
+    } else {
+        t = t;
+    }
+
+    if (p<0) {
+        p = 0;
+    } else {
+        p = p;
+    }
+
+    t_Input = t_Conversion_Any_to_K(t, temperature);
+    p_Input = pressure*PressureUnitCoefficient.at(p);
+}
+
+void WaterSteam::send_OutputValue()
+{
+    double temperature = t_Output;
+    double pressure = p_Output;
+
+    int t = ui->TemperatureOutcomboBox->currentIndex();
+    int p = ui->PressureOutcomboBox->currentIndex();
+
+    if (t<0) {
+        t = 0;
+    } else {
+        t = t;
+    }
+
+    if (p<0) {
+        p = 0;
+    } else {
+        p = p;
+    }
+
+    t_Output = t_Conversion_K_to_Any(t, temperature);
+    p_Output = pressure/PressureUnitCoefficient.at(p);
+}
+
+void WaterSteam::print_TemperatureOutputValue()
+{
+    QString temp = QString::number(t_Output, 'g', 6);
+    ui->TemperaturelineEdit->setText(temp);
+}
+
+void WaterSteam::print_PressureOutputValue()
+{
+    QString press = QString::number(p_Output, 'g', 6);
+    ui->PressurelineEdit->setText(press);
+}
+
+void WaterSteam::update_calculation()
+{
+    read_InputValue();
+    int i = ui->TemperatureOutcomboBox->currentIndex();
+
+    if (i<0) {
+        i = 0;
+    } else {
+        i = i;
+    }
+
+    double temperature = t_Conversion_K_to_Any(i, t_Input);
+    QString temp = QString::number(temperature, 'g', 6);
+    ui->TemperaturelineEdit->setText(temp);
+
+    int j = ui->PressureOutcomboBox->currentIndex();
+
+
+    if (j<0) {
+        j = 0;
+    } else {
+        j = j;
+    }
+
+    double pressure = p_Input/PressureUnitCoefficient.at(j);
+    QString press = QString::number(pressure, 'g', 6);
+    ui->PressurelineEdit->setText(press);
+
+    if (p_Input==0 && t_Input!=0) {
+        reg_4_saturation_Pressure();
+        send_OutputValue();
+        print_PressureOutputValue();
+    } else if (t_Input==273.15 && p_Input!=0) {
+        reg_4_saturation_Temperature();
+        send_OutputValue();
+        print_TemperatureOutputValue();
+        qDebug() << "ABS";
+    }
+
+    qDebug() << t_Input << p_Input;
+}
+
+void WaterSteam::on_TemperatureSpinBox_valueChanged()
+{
+    update_calculation();
+}
+
+void WaterSteam::on_PressureSpinBox_valueChanged()
+{
+    update_calculation();
+}
+
+void WaterSteam::on_TemperatureIncomboBox_currentIndexChanged()
+{
+    update_calculation();
+}
+
+void WaterSteam::on_PressureIncomboBox_currentIndexChanged()
+{
+    update_calculation();
+}
+
+void WaterSteam::on_TemperatureOutcomboBox_currentIndexChanged()
+{
+    update_calculation();
+}
+
+void WaterSteam::on_PressureOutcomboBox_currentIndexChanged()
+{
+    update_calculation();
 }
