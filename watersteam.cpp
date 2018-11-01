@@ -37,7 +37,7 @@ WaterSteam::WaterSteam(QWidget *parent) :
     ui(new Ui::WaterSteam)
 {
     ui->setupUi(this);
-    set_AllParameters();
+    init();
 }
 
 WaterSteam::~WaterSteam()
@@ -81,14 +81,21 @@ void WaterSteam::reg_4_saturation_Pressure()
 
 
 
-void WaterSteam::set_AllParameters()
+void WaterSteam::init()
 {
     ui->TemperatureIncomboBox->addItems(TemperatureUnit);
     ui->PressureIncomboBox->addItems(PressureUnit);
     ui->TemperatureOutcomboBox->addItems(TemperatureUnit);
     ui->PressureOutcomboBox->addItems(PressureUnit);
+    ui->TemperatureSpinBox->setValue(0);
+    ui->PressureSpinBox->setValue(0);
     ui->TemperaturelineEdit->setText("");
     ui->PressurelineEdit->setText("");
+    ui->TemperatureIncomboBox->setCurrentIndex(0);
+    ui->PressureIncomboBox->setCurrentIndex(0);
+    ui->TemperatureOutcomboBox->setCurrentIndex(0);
+    ui->PressureOutcomboBox->setCurrentIndex(0);
+    ui->Notiflabel->setText("");
 }
 
 void WaterSteam::read_InputValue()
@@ -221,4 +228,9 @@ void WaterSteam::on_TemperatureOutcomboBox_currentIndexChanged()
 void WaterSteam::on_PressureOutcomboBox_currentIndexChanged()
 {
     update_calculation();
+}
+
+void WaterSteam::on_resetButton_clicked()
+{
+    init();
 }

@@ -62,7 +62,7 @@ public:
                         };
 
     //FUNCTION
-    void set_AllParameters();
+    void init();
     void read_InputValue();
     void send_OutputValue();
     void print_TemperatureOutputValue();
@@ -82,6 +82,8 @@ private slots:
     void on_TemperatureOutcomboBox_currentIndexChanged();
 
     void on_PressureOutcomboBox_currentIndexChanged();
+
+    void on_resetButton_clicked();
 
 private:
     Ui::WaterSteam *ui;
