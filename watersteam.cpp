@@ -732,6 +732,84 @@ void WaterSteam::print_region4_table()
     });
 }
 
+void WaterSteam::print_region5_table()
+{
+    QList<QString> tableH_Header = {"Properties", "Vapor", "Unit"};
+    QString styleSheet = "::section {"
+                         "background-color: blue;}";
+
+    double value[7] = {
+                    h_5, s_5, u_5, rho_5, v_5, cv_5, cp_5
+                    };
+
+    QStringList label = {"Enthalpy", "Entropy", "Internal Energy", "Density", "Volume", "Isochoric Heat Capacity", "Isobaric Heat Capacity"};
+
+    ui->tableWidget->setRowCount(7);
+    ui->tableWidget->setColumnCount(3);
+    ui->tableWidget->setHorizontalHeaderLabels(tableH_Header);
+    ui->tableWidget->horizontalHeader()->setStyleSheet(styleSheet);
+
+    for (int i = 0; i < 7; i++) {
+        ui->tableWidget->setItem(i, 0, new QTableWidgetItem(label[i]));
+        ui->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::number(value[i], 'e', 9)));
+    }
+
+    QComboBox* h = new QComboBox;
+    QComboBox* s = new QComboBox;
+    QComboBox* u = new QComboBox;
+    QComboBox* rho = new QComboBox;
+    QComboBox* v = new QComboBox;
+    QComboBox* cv = new QComboBox;
+    QComboBox * cp = new QComboBox;
+
+    h->addItems(EnthalpyUnit);
+    s->addItems(EntropyUnit);
+    u->addItems(EnthalpyUnit);
+    rho->addItems(DensityUnit);
+    v->addItems(VolumeUnit);
+    cv->addItems(EntropyUnit);
+    cp->addItems(EntropyUnit);
+
+    ui->tableWidget->setColumnWidth(2, 120);
+
+    ui->tableWidget->setCellWidget(0, 2, h);
+    ui->tableWidget->setCellWidget(1, 2, s);
+    ui->tableWidget->setCellWidget(2, 2, u);
+    ui->tableWidget->setCellWidget(3, 2, rho);
+    ui->tableWidget->setCellWidget(4, 2, v);
+    ui->tableWidget->setCellWidget(5, 2, cv);
+    ui->tableWidget->setCellWidget(6, 2, cp);
+
+    connect(h, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {
+        double H = h_5*EnthalpyUnitCoefficient.at(index);
+        ui->tableWidget->setItem(0, 1, new QTableWidgetItem(QString::number(H, 'g', 12)));
+    });
+    connect(s, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {
+        double S = s_5*EntropyUnitCoefficient.at(index);
+        ui->tableWidget->setItem(1, 1, new QTableWidgetItem(QString::number(S, 'g', 12)));
+    });
+    connect(u, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {
+        double U = u_5*EnthalpyUnitCoefficient.at(index);
+        ui->tableWidget->setItem(2, 1, new QTableWidgetItem(QString::number(U, 'g', 12)));
+    });
+    connect(rho, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {
+        double RHO = rho_5*DensityUnitCoefficient.at(index);
+        ui->tableWidget->setItem(3, 1, new QTableWidgetItem(QString::number(RHO, 'g', 12)));
+    });
+    connect(v, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {
+        double V = v_5*VolumeUnitCoefficient.at(index);
+        ui->tableWidget->setItem(4, 1, new QTableWidgetItem(QString::number(V, 'g', 12)));
+    });
+    connect(cv, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {
+        double CV = cv_5*EntropyUnitCoefficient.at(index);
+        ui->tableWidget->setItem(5, 1, new QTableWidgetItem(QString::number(CV, 'g', 12)));
+    });
+    connect(cp, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {
+        double CP = cp_5*EntropyUnitCoefficient.at(index);
+        ui->tableWidget->setItem(6, 1, new QTableWidgetItem(QString::number(CP, 'g', 12)));
+    });
+}
+
 void WaterSteam::update_calculation()
 {
     read_InputValue();
