@@ -243,6 +243,57 @@ void WaterSteam::reg_4_saturation()
     p_Output = p;
 }
 
+//[REGION - 5]
+void WaterSteam::reg_5_thermodynamic_Properties()
+{
+    double t_Ref = 1000.00;
+    double p_Ref = 1.00;
+    double tau = t_Ref/t_Input5;
+    double pi = p_Input5/p_Ref;
+
+    double i_gamma = 0.00;
+    double i_gamma_p = 0.00;
+    double i_gamma_pp = 0.00;
+    double i_gamma_t = 0.00;
+    double i_gamma_tt = 0.00;
+    double i_gamma_p_t = 0.00;
+
+    double r_gamma = 0.00;
+    double r_gamma_p = 0.00;
+    double r_gamma_pp = 0.00;
+    double r_gamma_t = 0.00;
+    double r_gamma_tt = 0.00;
+    double r_gamma_p_t = 0.00;
+
+    for (int i = 1; i < 7; i++) {
+        double i_g = n0_region5[i]*pow(tau,j0_region5[i]);
+        double i_g_t = n0_region5[i]*j0_region5[i]*pow(tau,(j0_region5[i]-1));
+        double i_g_tt = n0_region5[i]*j0_region5[i]*(j0_region5[i]-1)*pow(tau,(j0_region5[i]-2));
+
+        i_gamma = i_gamma+i_g;
+        i_gamma_t = i_gamma_t+i_g_t;
+        i_gamma_tt = i_gamma_tt+i_g_tt;
+
+        double r_g = n_region5[i]*pow(pi,i_region5[i])*pow(tau,j_region5[i]);
+        double r_g_p = n_region5[i]*i_region5[i]*pow(pi,(i_region5[i]-1))*pow(tau,j_region5[i]);
+        double r_g_pp = n_region5[i]*i_region5[i]*(i_region5[i]-1)*pow(pi,(i_region5[i]-2))*pow(tau,j_region5[i]);
+        double r_g_t = n_region5[i]*pow(pi,i_region5[i])*j_region5[i]*pow(tau,(j_region5[i]-1));
+        double r_g_tt = n_region5[i]*pow(pi,i_region5[i])*j_region5[i]*(j_region5[i]-1)*pow(tau,(j_region5[i]-2));
+        double r_g_p_t = n_region5[i]*i_region5[i]*pow(pi,(i_region5[i]-1))*j_region5[i]*pow(tau,(j_region5[i]-1));
+
+        r_gamma = r_gamma+r_g;
+        r_gamma_p = r_gamma_p+r_g_p;
+        r_gamma_pp = r_gamma_pp+r_g_pp;
+        r_gamma_t = r_gamma_t+r_g_t;
+        r_gamma_tt = r_gamma_tt+r_g_tt;
+        r_gamma_p_t = r_gamma_p_t+r_g_p_t;
+    }
+
+    i_gamma = log(pi)+i_gamma;
+    i_gamma_p = 1/pi;
+    i_gamma_pp = -1/pow(pi,2);
+}
+
 //[GENERAL - FUNCTION]
 
 void WaterSteam::init()
@@ -430,7 +481,7 @@ void WaterSteam::print_region1_table()
 }
 
 void WaterSteam::print_region2_table(){
-    QList<QString> tableH_Header = {"Properties", "Liquid", "Unit"};
+    QList<QString> tableH_Header = {"Properties", "Vapor", "Unit"};
     QString styleSheet = "::section {"
                          "background-color: blue;}";
 

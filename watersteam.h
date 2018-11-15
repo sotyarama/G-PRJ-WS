@@ -30,8 +30,6 @@ public:
     double t_C = 647.096;
     double p_C = 22.064;
     double rho_C = 322.00;
-    double t_Reference_region4 = 1.00;
-    double p_Reference_region4 = 1.00;
     double r_Reference = 0.461526;
 
     //INPUT
@@ -39,11 +37,13 @@ public:
     double t_Input1;
     double t_Input2;
     double t_Input2meta;
+    double t_Input5;
 
     double p_Input;
     double p_Input1;
     double p_Input2;
     double p_Input2meta;
+    double p_Input5;
 
     //OUTPUT
     double t_Output;
@@ -73,11 +73,20 @@ public:
     double cv_2meta;
     double cp_2meta;
 
+    double v_5;
+    double rho_5;
+    double u_5;
+    double s_5;
+    double h_5;
+    double cv_5;
+    double cp_5;
+
     //THERMODYNAMIC-FUNCTION
     void reg_1_thermodynamic_Properties();
     void reg_2_thermodynamic_Properties();
     void reg_2_metastable_thermodynamic_Properties();
     void reg_4_saturation();
+    void reg_5_thermodynamic_Properties();
 
     //CONVERSION
     //                                              #1          #2          #3              #4              #5              #6              #7              #8              #9              #10
@@ -279,6 +288,56 @@ public:
                         650.17534844798,
                         };
 
+    double j0_region5[7] =   {
+                        0.00,
+                        0.00,
+                        1.00,
+                        -3.00,
+                        -2.00,
+                        -1.00,
+                        2.00,
+                        };
+
+    double n0_region5[7] =   {
+                        0.00,
+                        -13.179983674201,
+                        6.8540841634434,
+                        -0.024805148933466,
+                        0.36901534980333,
+                        -3.1161318213925,
+                        -0.32961626538917,
+                        };
+
+    double i_region5[7] =    {
+                        0.00,
+                        1.00,
+                        1.00,
+                        1.00,
+                        2.00,
+                        2.00,
+                        3.00,
+                        };
+
+    double j_region5[7] =    {
+                        0.00,
+                        1.00,
+                        2.00,
+                        3.00,
+                        3.00,
+                        9.00,
+                        7.00,
+                        };
+
+    double n_region5[7] =    {
+                        0.00,
+                        0.0015736404855259,
+                        0.00090153761673944,
+                        -0.0050270077677648,
+                        2.2440037409485E-06,
+                        -4.1163275453471E-06,
+                        3.7919454822955E-08,
+                        };
+
     //FUNCTION
     void init();
     void read_InputValue();
@@ -291,6 +350,7 @@ public:
     void print_region2_table();
     void print_region2meta_table();
     void print_region4_table();
+    void print_region5_table();
     void update_calculation();
     void resetTable();
 
