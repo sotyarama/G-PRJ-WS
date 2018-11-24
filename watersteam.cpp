@@ -911,7 +911,7 @@ void WaterSteam::on_TemperatureSpinBox_valueChanged(double arg)
         reg_2_metastable_thermodynamic_Properties();
 
         print_region4_table();
-        ui->Notiflabel->setText("");
+        ui->Notiflabel->setText("REGION 4");
     } else if (t>=t_InputMin && t<=t_InputMax && p>0.00) {
         resetTable();
         reg_4_saturation();
@@ -921,20 +921,21 @@ void WaterSteam::on_TemperatureSpinBox_valueChanged(double arg)
 
         if (p_Input < pOutput) {
             resetTable();
-            t_Input2meta = t_Input;
-            p_Input2meta = p_Input;
-            reg_2_metastable_thermodynamic_Properties();
-            print_region2meta_table();
+            t_Input2 = t_Input;
+            p_Input2 = p_Input;
+            reg_2_thermodynamic_Properties();
+            print_region2_table();
+            ui->Notiflabel->setText("REGION 2");
         } else if (p_Input > pOutput) {
             resetTable();
             t_Input1 = t_Input;
             p_Input1 = p_Input;
             reg_1_thermodynamic_Properties();
             print_region1_table();
+            ui->Notiflabel->setText("REGION 1");
         } else {
             qDebug() << "ANEEEEEEEEH";
         }
-        ui->Notiflabel->setText("");
     } else {
         resetTable();
         ui->Notiflabel->setText("For saturation the temperature must be between " + tMin + " - " + tMax + "." );
@@ -986,7 +987,7 @@ void WaterSteam::on_PressureSpinBox_valueChanged(double arg)
         reg_2_metastable_thermodynamic_Properties();;
 
         print_region4_table();
-        ui->Notiflabel->setText("");
+        ui->Notiflabel->setText("REGION 4");
     } else if ((p>=p_InputMin || p<=p_InputMax) && t!=0.00) {
         resetTable();
         reg_4_saturation();
@@ -1000,12 +1001,14 @@ void WaterSteam::on_PressureSpinBox_valueChanged(double arg)
             p_Input1 = p_Input;
             reg_1_thermodynamic_Properties();
             print_region1_table();
+            ui->Notiflabel->setText("REGION 1");
         } else if (t_Input > tOutput) {
             resetTable();
-            t_Input2meta = t_Input;
-            p_Input2meta = p_Input;
-            reg_2_metastable_thermodynamic_Properties();
-            print_region2meta_table();
+            t_Input2 = t_Input;
+            p_Input2 = p_Input;
+            reg_2_thermodynamic_Properties();
+            print_region2_table();
+            ui->Notiflabel->setText("REGION 2");
         } else {
             resetTable();
             reg_4_saturation();
@@ -1024,11 +1027,10 @@ void WaterSteam::on_PressureSpinBox_valueChanged(double arg)
             reg_2_metastable_thermodynamic_Properties();
 
             print_region4_table();
-            ui->Notiflabel->setText("");
+            ui->Notiflabel->setText("REGION 4");
 
             qDebug() << "TAMBAH ANEH";
         }
-        ui->Notiflabel->setText("");
     } else {
         resetTable();
         ui->Notiflabel->setText("For saturation the pressure must be between " + pMin + " - " + pMax + "." );
