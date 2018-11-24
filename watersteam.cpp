@@ -440,7 +440,11 @@ void WaterSteam::print_region1_table()
     cv->addItems(EntropyUnit);
     cp->addItems(EntropyUnit);
 
-    ui->tableWidget->setColumnWidth(2, 120);
+    ui->tableWidget->setMinimumWidth(420);
+
+    ui->tableWidget->setColumnWidth(0, 160);
+    ui->tableWidget->setColumnWidth(1, 130);
+    ui->tableWidget->setColumnWidth(2, 130);
 
     ui->tableWidget->setCellWidget(0, 2, h);
     ui->tableWidget->setCellWidget(1, 2, s);
@@ -478,6 +482,7 @@ void WaterSteam::print_region1_table()
         double CP = cp_1*EntropyUnitCoefficient.at(index);
         ui->tableWidget->setItem(6, 1, new QTableWidgetItem(QString::number(CP, 'g', 12)));
     });
+
 }
 
 void WaterSteam::print_region2_table(){
@@ -517,7 +522,11 @@ void WaterSteam::print_region2_table(){
     cv->addItems(EntropyUnit);
     cp->addItems(EntropyUnit);
 
-    ui->tableWidget->setColumnWidth(2, 120);
+    ui->tableWidget->setMinimumWidth(420);
+
+    ui->tableWidget->setColumnWidth(0, 160);
+    ui->tableWidget->setColumnWidth(1, 130);
+    ui->tableWidget->setColumnWidth(2, 130);
 
     ui->tableWidget->setCellWidget(0, 2, h);
     ui->tableWidget->setCellWidget(1, 2, s);
@@ -594,7 +603,11 @@ void WaterSteam::print_region2meta_table()
     cv->addItems(EntropyUnit);
     cp->addItems(EntropyUnit);
 
-    ui->tableWidget->setColumnWidth(2, 120);
+    ui->tableWidget->setMinimumWidth(420);
+
+    ui->tableWidget->setColumnWidth(0, 160);
+    ui->tableWidget->setColumnWidth(1, 130);
+    ui->tableWidget->setColumnWidth(2, 130);
 
     ui->tableWidget->setCellWidget(0, 2, h);
     ui->tableWidget->setCellWidget(1, 2, s);
@@ -675,10 +688,12 @@ void WaterSteam::print_region4_table()
     cv->addItems(EntropyUnit);
     cp->addItems(EntropyUnit);
 
-    ui->tableWidget->setColumnWidth(0, 150);
-    ui->tableWidget->setColumnWidth(1, 80);
-    ui->tableWidget->setColumnWidth(2, 80);
-    ui->tableWidget->setColumnWidth(3, 110);
+    ui->tableWidget->setMinimumWidth(550);
+
+    ui->tableWidget->setColumnWidth(0, 160);
+    ui->tableWidget->setColumnWidth(1, 130);
+    ui->tableWidget->setColumnWidth(2, 130);
+    ui->tableWidget->setColumnWidth(3, 130);
 
     ui->tableWidget->setCellWidget(0, 3, h);
     ui->tableWidget->setCellWidget(1, 3, s);
@@ -770,7 +785,11 @@ void WaterSteam::print_region5_table()
     cv->addItems(EntropyUnit);
     cp->addItems(EntropyUnit);
 
-    ui->tableWidget->setColumnWidth(2, 120);
+    ui->tableWidget->setMinimumWidth(420);
+
+    ui->tableWidget->setColumnWidth(0, 160);
+    ui->tableWidget->setColumnWidth(1, 130);
+    ui->tableWidget->setColumnWidth(2, 130);
 
     ui->tableWidget->setCellWidget(0, 2, h);
     ui->tableWidget->setCellWidget(1, 2, s);
@@ -847,8 +866,6 @@ void WaterSteam::update_calculation()
         print_TemperatureOutputValue();
         qDebug() << "ABS";
     }
-
-    qDebug() << t_Input << p_Input;
 }
 
 void WaterSteam::on_TemperatureSpinBox_valueChanged(double arg)
@@ -990,6 +1007,25 @@ void WaterSteam::on_PressureSpinBox_valueChanged(double arg)
             reg_2_metastable_thermodynamic_Properties();
             print_region2meta_table();
         } else {
+            resetTable();
+            reg_4_saturation();
+            send_OutputValue();
+            print_PressureOutputValue();
+
+            t_Input1 = t_Input;
+            t_Input2meta = t_Input;
+
+            double pOutput = p_Output*PressureUnitCoefficient.at(pIndex);
+
+            p_Input1 = pOutput;
+            p_Input2meta = pOutput;
+
+            reg_1_thermodynamic_Properties();
+            reg_2_metastable_thermodynamic_Properties();
+
+            print_region4_table();
+            ui->Notiflabel->setText("");
+
             qDebug() << "TAMBAH ANEH";
         }
         ui->Notiflabel->setText("");
