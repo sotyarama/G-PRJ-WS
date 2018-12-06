@@ -1,8 +1,13 @@
 #include "watersteam.h"
 #include "ui_watersteam.h"
 #include "qmath.h"
+
 #include <QList>
 #include <QDebug>
+#include <Q3DSurface>
+#include <QtDataVisualization>
+
+using namespace QtDataVisualization;
 
 double t_Conversion_K_to_Any(int i, double j)
 {
@@ -38,8 +43,35 @@ WaterSteam::WaterSteam(QWidget *parent) :
 {
     ui->setupUi(this);
     init();
+    //generatePoints();
+    generateGraph();
+
+    /*
+    Q3DSurface *graph = new Q3DSurface();
+    QWidget *container = QWidget::createWindowContainer(graph);
+    QSize screenSize = graph->screen()->size();
+    container->setMinimumSize(QSize(screenSize.width()/2, screenSize.height()/1.6));
+    container->setMaximumSize(screenSize);
+    container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    container->setFocusPolicy(Qt::StrongFocus);
 
 
+    QSurfaceDataArray *data = new QSurfaceDataArray;
+    QSurfaceDataRow *dataRow1 = new QSurfaceDataRow;
+    QSurfaceDataRow *dataRow2 = new QSurfaceDataRow;
+
+
+
+    *dataRow1 << QVector3D(0.0, 0.0, 0.0) << QVector3D(0.1, 2.0, 0.0);
+    *dataRow2 << QVector3D(2.0, 0.0, 1.0) << QVector3D(3.0, 5.0, 2.0);
+    *data << dataRow1 << dataRow2;
+
+    QSurface3DSeries *series = new QSurface3DSeries;
+    series->dataProxy()->resetArray(data);
+    graph->addSeries(series);
+
+    ui->horizontalLayout_6->addWidget(container, 1);
+    */
 
     //QComboBox* aCombo = new QComboBox;
     //aCombo->addItems(TemperatureUnit);
@@ -1069,4 +1101,105 @@ void WaterSteam::resetTable()
     ui->tableWidget->clearContents();
     ui->tableWidget->setColumnCount(0);
     ui->tableWidget->setRowCount(0);
+}
+
+void WaterSteam::generateGraph()
+{
+    Q3DSurface *graph = new Q3DSurface();
+    QWidget *container = QWidget::createWindowContainer(graph);
+    QSize screenSize = graph->screen()->size();
+    container->setMinimumSize(QSize(screenSize.width()/2, screenSize.height()/1.6));
+    container->setMaximumSize(screenSize);
+    container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    container->setFocusPolicy(Qt::StrongFocus);
+
+    double tempMin = 274.15;
+    double tempMax = 600.00;
+    double pressMin = 0.01;
+    double pressMax = 100.00;
+
+    double tempSample = 50;
+    double pressSample = 50;
+
+    int x = 0;
+
+    double tempStep = (tempMax-tempMin) / double (tempSample-1);
+    double pressStep = (pressMax-pressMin) / double (pressSample-1);
+
+
+    QSurfaceDataArray *data = new QSurfaceDataArray;
+    data->reserve(tempSample);
+
+    for (int i = 0; i < tempSample; i++) {
+        QSurfaceDataRow *newRow = new QSurfaceDataRow(pressSample);
+        double temp = qMin(tempMax, (i*tempStep+tempMin));;
+        double dZ = i;
+        int index = 0;
+        for (int j = 0; j < pressSample; j++ ) {
+            double press = qMin(pressMax, (j*pressStep+pressMin));
+            double dX = j;
+            double dY = i*j*0.3;
+            x = x + 1;
+
+            t_Input1 = temp;
+            p_Input1 = press;
+
+            reg_1_thermodynamic_Properties();
+
+            double volume = v_1*1000000;
+
+            (*newRow)[index++].setPosition(QVector3D(press, volume, temp));
+
+            qDebug() << "DATA KE-" << x << " = " << temp << "|" << press << "|" << volume;
+
+        }
+        *data << newRow;
+    }
+
+    /*
+    QSurfaceDataRow *dataRow1 = new QSurfaceDataRow;
+    QSurfaceDataRow *dataRow2 = new QSurfaceDataRow;
+
+
+
+    *dataRow1 << QVector3D(0.0, 0.0, 0.0) << QVector3D(0.1, 2.0, 0.0);
+    *dataRow2 << QVector3D(2.0, 0.0, 1.0) << QVector3D(3.0, 5.0, 2.0);
+    *data << dataRow1 << dataRow2;
+    */
+    QSurface3DSeries *series = new QSurface3DSeries;
+    series->dataProxy()->resetArray(data);
+    graph->addSeries(series);
+
+    ui->horizontalLayout_6->addWidget(container, 1);
+}
+
+void WaterSteam::generatePoints()
+{
+    double tempMin = 274.15;
+    double tempMax = 600.00;
+    double pressMin = 0.01;
+    double pressMax = 100.00;
+
+    double tempSample = 100;
+    double pressSample = 100;
+
+    int x = 0;
+
+    double tempStep = (tempMax-tempMin) / double (tempSample-1);
+    double pressStep = (pressMax-pressMin) / double (pressSample-1);
+
+    for (int i = 0; i < tempSample; i++) {
+        double temp = qMin(tempMax, (i*tempStep+tempMin));
+        for (int j = 0; j < pressSample; j++) {
+            double press = qMin(pressMax, (j*pressStep+pressMin));
+            x = x + 1;
+
+            t_Input1 = temp;
+            p_Input1 = press;
+
+            reg_1_thermodynamic_Properties();
+
+            qDebug() << "DATA KE-" << x << " = " << temp << "|" << press << "|" << v_1;
+        }
+    }
 }

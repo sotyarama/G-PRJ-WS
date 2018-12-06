@@ -353,6 +353,8 @@ public:
     void print_region5_table();
     void update_calculation();
     void resetTable();
+    void generateGraph();
+    void generatePoints();
 
 
 private slots:
